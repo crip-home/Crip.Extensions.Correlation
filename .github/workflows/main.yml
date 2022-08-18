@@ -1,0 +1,72 @@
+name: CI/CD pipeline
+
+on:
+  create:
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'Crip.Extensions.Correlation.sln'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Set default Build Version
+        if: startsWith(github.ref, 'refs/tags/v') != true
+        run: echo "BUILD_VERSION=1.0.0" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Get Build Version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          arrTag=(${GITHUB_REF//\// })
+          BUILD_VERSION="${arrTag[2]}"
+          BUILD_VERSION="${BUILD_VERSION//v}"
+          echo "BUILD_VERSION=${BUILD_VERSION}" >> $GITHUB_ENV
+          echo $BUILD_VERSION
+        shell: bash
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.6
+
+      - name: 🔨 Setup .NET 3.1 & 5.0 & 6.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            3.1.x
+            5.0.x
+            6.0.x
+
+      - name: Restore dependencies
+        run: nuget restore $SOLUTION
+
+      - name: Build
+        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
+
+      - name: Run tests
+        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
+
+      - name: Publish GitHub NuGet
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: dotnet nuget push **\*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/crip-home/index.json --skip-duplicate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
