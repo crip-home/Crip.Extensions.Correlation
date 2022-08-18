@@ -4,13 +4,14 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:45096",
-      "sslPort": 44367
+      "applicationUrl": "http://localhost:52686",
+      "sslPort": 44342
     }
   },
   "profiles": {
-    "Crip.Extensions.Correlation.Core31.Example": {
+    "Crip.Extensions.Correlation.Core50.Example": {
       "commandName": "Project",
+      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",

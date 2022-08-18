@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{49
 		examples\Crip.Extensions.Correlation.postman_collection.json = examples\Crip.Extensions.Correlation.postman_collection.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.Extensions.Correlation.Core50.Example", "examples\Crip.Extensions.Correlation.Core50.Example\Crip.Extensions.Correlation.Core50.Example.csproj", "{1FB15514-41E5-4312-A3A5-C8EED677C4CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,9 +43,14 @@ Global
 		{C6AB3F10-72E7-48CF-BA46-2C7AB0783064}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6AB3F10-72E7-48CF-BA46-2C7AB0783064}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6AB3F10-72E7-48CF-BA46-2C7AB0783064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FB15514-41E5-4312-A3A5-C8EED677C4CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FB15514-41E5-4312-A3A5-C8EED677C4CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FB15514-41E5-4312-A3A5-C8EED677C4CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FB15514-41E5-4312-A3A5-C8EED677C4CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DFB95E3-0DC0-4559-9031-B751FBF0BB2E} = {D5DB35AC-64D8-45B2-924B-910EF0BFCCBA}
 		{C6AB3F10-72E7-48CF-BA46-2C7AB0783064} = {494AA875-6285-41ED-9CFC-4F46BDBEC607}
+		{1FB15514-41E5-4312-A3A5-C8EED677C4CD} = {494AA875-6285-41ED-9CFC-4F46BDBEC607}
 	EndGlobalSection
 EndGlobal

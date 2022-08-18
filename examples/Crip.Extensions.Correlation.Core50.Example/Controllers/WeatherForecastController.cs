@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.Extensions.Correlation.Core31.Example.Controllers;
+namespace Crip.Extensions.Correlation.Core50.Example.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -12,7 +12,8 @@ public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries =
     {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering",
+        "Scorching"
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
@@ -26,13 +27,13 @@ public class WeatherForecastController : ControllerBase
     public IEnumerable<WeatherForecast> Get()
     {
         _logger.LogDebug("get WeatherForecast");
+
         var rng = new Random();
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+        {
+            Date = DateTime.Now.AddDays(index),
+            TemperatureC = rng.Next(-20, 55),
+            Summary = Summaries[rng.Next(Summaries.Length)]
+        }).ToArray();
     }
 }

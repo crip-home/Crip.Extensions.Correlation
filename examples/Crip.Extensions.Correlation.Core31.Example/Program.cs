@@ -15,6 +15,6 @@ public class Program
             {
                 webBuilder.UseStartup<Startup>();
             })
-            .UseSerilog(((context, configuration) =>
-                configuration.ReadFrom.Configuration(context.Configuration)));
+            .UseSerilog((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration));
 }
