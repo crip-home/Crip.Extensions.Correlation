@@ -110,6 +110,232 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "net core 5.0 /weatherforecast",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('correlation_id', pm.variables.replaceIn('test-{{$guid}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Response status code is 200', () => pm.response.to.have.status(200));\r",
+							"\r",
+							"const correlationId = pm.variables.get('correlation_id');\r",
+							"\r",
+							"pm.test('Response contains correlation header', () => {\r",
+							"    const header = getCorrelationHeader();\r",
+							"    pm.expect(header).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test(`Response correlation header is set to ${correlationId}`, () => {\r",
+							"    const header = getCorrelationHeader();\r",
+							"    pm.expect(header).to.haveOwnProperty('value', correlationId);\r",
+							"});\r",
+							"\r",
+							"function getCorrelationHeader() {\r",
+							"    return pm.response.headers.find(header => header.key === 'X-Correlation-Id');\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "{{correlation_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/weatherforecast",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"weatherforecast"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "net core 5.0 /test/client",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('correlation_id', pm.variables.replaceIn('test-{{$guid}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+							"pm.test('Response body contains client correlation header', () => {\r",
+							"    const correlationId = pm.variables.get('correlation_id');\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.not.be.undefined;\r",
+							"    pm.expect(body).to.haveOwnProperty('X-Correlation-Id', correlationId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "{{correlation_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/test/client",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"test",
+						"client"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "net core 6.0 /weatherforecast",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('correlation_id', pm.variables.replaceIn('test-{{$guid}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Response status code is 200', () => pm.response.to.have.status(200));\r",
+							"\r",
+							"const correlationId = pm.variables.get('correlation_id');\r",
+							"\r",
+							"pm.test('Response contains correlation header', () => {\r",
+							"    const header = getCorrelationHeader();\r",
+							"    pm.expect(header).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test(`Response correlation header is set to ${correlationId}`, () => {\r",
+							"    const header = getCorrelationHeader();\r",
+							"    pm.expect(header).to.haveOwnProperty('value', correlationId);\r",
+							"});\r",
+							"\r",
+							"function getCorrelationHeader() {\r",
+							"    return pm.response.headers.find(header => header.key === 'X-Correlation-Id');\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "{{correlation_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7027/weatherforecast",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7027",
+					"path": [
+						"weatherforecast"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "net core 6.0 /test/client",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set('correlation_id', pm.variables.replaceIn('test-{{$guid}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));\r",
+							"pm.test('Response body contains client correlation header', () => {\r",
+							"    const correlationId = pm.variables.get('correlation_id');\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.not.be.undefined;\r",
+							"    pm.expect(body).to.haveOwnProperty('X-Correlation-Id', correlationId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Correlation-Id",
+						"value": "{{correlation_id}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7027/test/client",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7027",
+					"path": [
+						"test",
+						"client"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

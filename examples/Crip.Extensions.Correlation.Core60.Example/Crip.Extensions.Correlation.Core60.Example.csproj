@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Crip.Extensions.Correlation\Crip.Extensions.Correlation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
