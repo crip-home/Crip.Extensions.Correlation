@@ -44,12 +44,11 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.6
 
-      - name: 🔨 Setup .NET 3.1 & 5.0 & 6.0
+      - name: 🔨 Setup .NET 3.1 & 6.0
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
             3.1.x
-            5.0.x
             6.0.x
 
       - name: Restore dependencies
