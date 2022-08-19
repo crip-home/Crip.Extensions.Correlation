@@ -35,7 +35,7 @@ jobs:
           dotnet-version: ${{ matrix.version.dotnet }}
 
       - name: Run tests
-        run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG -v normal --f ${{ matrix.version.framework }}
+        run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG -v normal -f ${{ matrix.version.framework }}
 
   release_package:
 
