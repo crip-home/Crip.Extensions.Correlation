@@ -34,17 +34,8 @@ jobs:
         with:
           dotnet-version: ${{ matrix.version.dotnet }}
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.6
-
-      - name: Restore dependencies
-        run: nuget restore $SOLUTION
-
-      - name: Build
-        run: dotnet build $TESTS --configuration $BUILD_CONFIG --no-restore
-
       - name: Run tests
-        run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG --no-restore --no-build -v normal --f ${{ matrix.version.framework }}
+        run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG -v normal --f ${{ matrix.version.framework }}
 
   release_package:
 
