@@ -13,8 +13,10 @@ jobs:
   build:
 
     env:
-      BUILD_CONFIG: 'Release'
-      SOLUTION: 'Crip.Extensions.Correlation.sln'
+      BUILD_CONFIG: Release
+      SOLUTION: Crip.Extensions.Correlation.sln
+      TESTS: Crip.Extensions.Correlation.Tests/Crip.Extensions.Correlation.Tests.csproj
+      LIBRARY: Crip.Extensions.Correlation/Crip.Extensions.Correlation.csproj
 
     runs-on: ubuntu-latest
 
@@ -56,10 +58,10 @@ jobs:
         run: nuget restore $SOLUTION
 
       - name: Build
-        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
+        run: dotnet build $LIBRARY --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
 
       - name: Run tests
-        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
+        run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG --no-restore --verbosity normal
 
       - name: Publish GitHub NuGet
         if: startsWith(github.ref, 'refs/tags/v')
