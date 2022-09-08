@@ -11,7 +11,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     [Fact, Trait("Category", "Unit")]
     public void Constructor_DoesNotFail()
     {
-        var act = () => new CorrelationIdHeaderHandler(_options.Object, _correlation.Object);
+        var act = () => new CorrelationIdHeaderHandler(_options.Object);
 
         act.Should().NotThrow();
     }
@@ -19,7 +19,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfOptionsNotProvided()
     {
-        var act = () => new CorrelationIdHeaderHandler(null!, _correlation.Object);
+        var act = () => new CorrelationIdHeaderHandler(null!);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'options')");
     }
@@ -27,7 +27,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfCorrelationNotProvided()
     {
-        var act = () => new CorrelationIdHeaderHandler(_options.Object, null!);
+        var act = () => new CorrelationIdHeaderHandler(_options.Object);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
     }
@@ -88,7 +88,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
         request.Headers.Any(header => header.Value.FirstOrDefault() == "header-id").Should().BeFalse();
     }
 
-    private CorrelationIdHeaderHandler Handler() => new(_options.Object, _correlation.Object) { InnerHandler = InnerHandler };
+    private CorrelationIdHeaderHandler Handler() => new(_options.Object) { InnerHandler = InnerHandler };
 
     private void MockOptions(CorrelationIdOptions correlationIdOptions) =>
         _options.Setup(options => options.Value).Returns(correlationIdOptions);

@@ -16,25 +16,25 @@ public class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IOptionsMonitor<CorrelationIdOptions> _options;
-    private readonly ICorrelationService _correlation;
+    private readonly ICorrelationManager _manager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdMiddleware"/> class.
     /// </summary>
     /// <param name="next">The next middleware delegate.</param>
     /// <param name="options">The correlation identifier options.</param>
-    /// <param name="correlation">The correlation service.</param>
+    /// <param name="manager">The correlation identifier manager.</param>
     /// <exception cref="System.ArgumentNullException">
     /// If <paramref name="next"/> or <paramref name="options"/> is not provided.
     /// </exception>
     public CorrelationIdMiddleware(
         RequestDelegate next,
         IOptionsMonitor<CorrelationIdOptions> options,
-        ICorrelationService correlation)
+        ICorrelationManager manager)
     {
         _next = next ?? throw new ArgumentNullException(nameof(next));
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));
+        _manager = manager ?? throw new ArgumentNullException(nameof(manager));
     }
 
     private CorrelationIdOptions Options => _options.CurrentValue;
@@ -51,7 +51,7 @@ public class CorrelationIdMiddleware
     {
         if (context.Request?.Headers is null) throw new RequestHeadersMissingException();
 
-        _correlation.Set(context, GetIdentifier(context.Request) ?? CreateIdentifier());
+        _manager.Set(GetIdentifier(context.Request) ?? CreateIdentifier());
 
         if (Options.IncludeInResponse)
         {
@@ -70,7 +70,7 @@ public class CorrelationIdMiddleware
 
     private Func<Task> AddToResponseHeaders(HttpContext context) => () =>
     {
-        var correlationId = _correlation.Get(context);
+        var correlationId = _manager.Get();
         var headers = context.Response.Headers;
         if (headers?.ContainsKey(Options.Header) is false)
         {

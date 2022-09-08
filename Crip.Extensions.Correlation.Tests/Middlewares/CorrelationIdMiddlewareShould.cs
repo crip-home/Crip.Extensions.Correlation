@@ -16,7 +16,7 @@ public class CorrelationIdMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_CanCreateInstance()
     {
-        var act = () => new CorrelationIdMiddleware(_delegate, _options.Object, _correlation.Object);
+        var act = () => new CorrelationIdMiddleware(_delegate, _options.Object);
 
         act.Should().NotThrow();
     }
@@ -24,7 +24,7 @@ public class CorrelationIdMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfDelegateNotProvided()
     {
-        var act = () => new CorrelationIdMiddleware(null!, _options.Object, _correlation.Object);
+        var act = () => new CorrelationIdMiddleware(null!, _options.Object);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'next')");
     }
@@ -32,7 +32,7 @@ public class CorrelationIdMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfOptionsNotProvided()
     {
-        var act = () => new CorrelationIdMiddleware(_delegate, null!, _correlation.Object);
+        var act = () => new CorrelationIdMiddleware(_delegate, null!);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'options')");
     }
@@ -40,7 +40,7 @@ public class CorrelationIdMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfCorrelationNotProvided()
     {
-        var act = () => new CorrelationIdMiddleware(_delegate, _options.Object, null!);
+        var act = () => new CorrelationIdMiddleware(_delegate, _options.Object);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
     }
@@ -162,7 +162,7 @@ public class CorrelationIdMiddlewareShould
             .Setup(correlation => correlation.Get(It.IsAny<HttpContext>()))
             .Returns(result);
 
-    private CorrelationIdMiddleware Middleware() => new(_delegate, _options.Object, _correlation.Object);
+    private CorrelationIdMiddleware Middleware() => new(_delegate, _options.Object);
 
     private static IHttpResponseFeature HeadersFeature()
     {
