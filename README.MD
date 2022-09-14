@@ -49,6 +49,47 @@ services.AddTracedHttpClient<TClient, TImplementation>(((provider, client) =>
 }));
 ```
 
+## Correlation outside of ASP.NET request context
+
+To simplify managing correlation contexts, the `ICorrelationManager` can be used. It takes care of the logic to create
+the context properly. This is especially useful when running background tasks, console apps, Windows services, etc.
+which need to interact with external services. Think of message broker handlers, scheduled task runners, etc.
+
+```csharp
+public class MyBackgroundService : BackgroundService
+{
+    private readonly ILogger<MyBackgroundService> _logger;
+    private readonly ICorrelationManager _correlation;
+    private readonly ITestControllerClient _client;
+
+    public MyBackgroundService(
+        ILogger<MyBackgroundService> logger,
+        ICorrelationManager correlation,
+        ITestControllerClient client)
+    {
+        _logger = logger;
+        _correlation = correlation;
+        _client = client;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogDebug("Background task before use"); // No correlation context logged
+
+        await _correlation.Use("some-test-correlation-001", async () =>
+        {
+            _logger.LogDebug("Background task after set");
+
+            var result = await _client.Test();
+
+            _logger.LogDebug("response: {@Result}", result);
+        });
+
+        _logger.LogDebug("Background task after use");
+    }
+}
+```
+
 ## Customization
 
 You can customize correlation by providing custom options:
