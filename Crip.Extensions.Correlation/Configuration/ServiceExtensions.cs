@@ -14,13 +14,12 @@ namespace Crip.Extensions.Correlation;
 public static class ServiceExtensions
 {
     /// <summary>
-    /// Adds the <see cref="ICorrelationService"/> and related services to the <see cref="IServiceCollection"/>.
+    /// Adds the <see cref="ICorrelationManager"/> and related services to the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
     /// <returns>An updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddCorrelation(this IServiceCollection services) => services
-        .AddTransient<ICorrelationService, CorrelationService>()
-        .AddTransient<IHttpCorrelationAccessor, HttpCorrelationAccessor>()
+        .AddTransient<ICorrelationManager, CorrelationManager>()
         .AddTransient<CorrelationIdHeaderHandler>();
 
     /// <summary>

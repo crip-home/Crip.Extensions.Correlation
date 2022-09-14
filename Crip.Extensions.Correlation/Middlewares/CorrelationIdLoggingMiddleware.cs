@@ -12,26 +12,26 @@ namespace Crip.Extensions.Correlation;
 public class CorrelationIdLoggingMiddleware
 {
     private readonly ILogger<CorrelationIdLoggingMiddleware> _logger;
-    private readonly ICorrelationService _correlation;
+    private readonly ICorrelationManager _manager;
     private readonly RequestDelegate _next;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdLoggingMiddleware"/> class.
     /// </summary>
     /// <param name="logger">The logging service.</param>
-    /// <param name="correlation">The correlation identifier service.</param>
+    /// <param name="manager">The correlation identifier manager.</param>
     /// <param name="next">The request delegate.</param>
     /// <exception cref="System.ArgumentNullException">
-    /// If <paramref name="logger"/> or <paramref name="correlation"/> or <paramref name="next"/>
+    /// If <paramref name="logger"/> or <paramref name="manager"/> or <paramref name="next"/>
     /// is not provided.
     /// </exception>
     public CorrelationIdLoggingMiddleware(
         ILogger<CorrelationIdLoggingMiddleware> logger,
-        ICorrelationService correlation,
+        ICorrelationManager manager,
         RequestDelegate next)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));
+        _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         _next = next ?? throw new ArgumentNullException(nameof(next));
     }
 
@@ -47,7 +47,7 @@ public class CorrelationIdLoggingMiddleware
     {
         if (context is null) throw new ArgumentNullException(nameof(context));
 
-        var scope = _correlation.Scope(context);
+        var scope = _manager.Scope();
 
         using (_logger.BeginScope(scope)) await _next(context);
     }

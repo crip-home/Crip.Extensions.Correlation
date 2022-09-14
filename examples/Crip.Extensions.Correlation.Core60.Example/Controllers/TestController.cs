@@ -8,19 +8,28 @@ namespace Crip.Extensions.Correlation.Core60.Example.Controllers;
 public class TestController : ControllerBase
 {
     private readonly ITestControllerClient _client;
+    private readonly ILogger<TestController> _logger;
 
-    public TestController(ITestControllerClient client)
+    public TestController(ITestControllerClient client, ILogger<TestController> logger)
     {
         _client = client;
+        _logger = logger;
     }
 
     [HttpGet]
-    public Dictionary<string, string> Get() =>
-        Request.Headers.ToDictionary(
+    public Dictionary<string, string> Get()
+    {
+        _logger.LogInformation("Header request");
+        return Request.Headers.ToDictionary(
             header => header.Key,
             header => header.Value.ToString());
+    }
 
     [HttpGet("client")]
-    public async Task<Dictionary<string, string>> Client() =>
-        await _client.Test();
+    public async Task<Dictionary<string, string>> Client()
+    {
+        _logger.LogInformation("Before http call");
+
+        return await _client.Test();
+    }
 }

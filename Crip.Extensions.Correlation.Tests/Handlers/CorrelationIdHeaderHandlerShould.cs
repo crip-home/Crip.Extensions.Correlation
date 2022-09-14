@@ -6,7 +6,7 @@ namespace Crip.Extensions.Correlation.Tests.Handlers;
 public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
 {
     private readonly Mock<IOptions<CorrelationIdOptions>> _options = new();
-    private readonly Mock<IHttpCorrelationAccessor> _correlation = new();
+    private readonly Mock<ICorrelationManager> _correlation = new();
 
     [Fact, Trait("Category", "Unit")]
     public void Constructor_DoesNotFail()
@@ -29,7 +29,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     {
         var act = () => new CorrelationIdHeaderHandler(_options.Object, null!);
 
-        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
+        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'manager')");
     }
 
     [Fact, Trait("Category", "Unit")]

@@ -23,22 +23,22 @@ public class CorrelationIdHeaderHandler : DelegatingHandler
     private const StringComparison CompareIgnoreCase = StringComparison.InvariantCultureIgnoreCase;
 
     private readonly IOptions<CorrelationIdOptions> _options;
-    private readonly IHttpCorrelationAccessor _correlation;
+    private readonly ICorrelationManager _manager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationIdHeaderHandler"/> class.
     /// </summary>
     /// <param name="options">The correlation identifier options.</param>
-    /// <param name="correlation">The HTTP context correlation identifier accessor.</param>
+    /// <param name="manager">The correlation identifier manager.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown if <paramref name="options"/> or <paramref name="correlation"/> is not provided.
+    /// Thrown if <paramref name="options"/> or <paramref name="manager"/> is not provided.
     /// </exception>
     public CorrelationIdHeaderHandler(
         IOptions<CorrelationIdOptions> options,
-        IHttpCorrelationAccessor correlation)
+        ICorrelationManager manager)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        _correlation = correlation ?? throw new ArgumentNullException(nameof(correlation));
+        _manager = manager ?? throw new ArgumentNullException(nameof(manager));
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class CorrelationIdHeaderHandler : DelegatingHandler
     /// Get existing correlation identifier from current HTTP context accessor.
     /// </summary>
     /// <returns>Correlation identifier value or <c>null</c>, if not found.</returns>
-    protected virtual string? GetExistingIdentifier() => _correlation.Get();
+    protected virtual string? GetExistingIdentifier() => _manager.Get();
 
     /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(

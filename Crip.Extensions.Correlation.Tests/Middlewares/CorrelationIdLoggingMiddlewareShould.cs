@@ -2,13 +2,14 @@
 using Crip.Extensions.Correlation.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Crip.Extensions.Correlation.Tests.Middlewares;
 
 public class CorrelationIdLoggingMiddlewareShould
 {
     readonly Mock<ILogger<CorrelationIdLoggingMiddleware>> _logger = new();
-    readonly Mock<ICorrelationService> _correlation = new();
+    readonly Mock<ICorrelationManager> _correlation = new();
     readonly RequestDelegate _delegate = _ => Task.CompletedTask;
 
     [Fact, Trait("Category", "Unit")]
@@ -32,7 +33,7 @@ public class CorrelationIdLoggingMiddlewareShould
     {
         var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, null!, _delegate);
 
-        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
+        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'manager')");
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -84,7 +85,7 @@ public class CorrelationIdLoggingMiddlewareShould
 
     private void MockCorrelationScope(string key, string value) =>
         _correlation
-            .Setup(correlation => correlation.Scope(It.IsAny<HttpContext>()))
+            .Setup(correlation => correlation.Scope())
             .Returns(new Dictionary<string, object?> { { key, value } });
 
     private static ILoggerFactory CreateLoggerFactory() =>

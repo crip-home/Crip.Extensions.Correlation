@@ -11,7 +11,7 @@ public class CorrelationIdMiddlewareShould
 {
     readonly RequestDelegate _delegate = _ => Task.CompletedTask;
     readonly Mock<IOptionsMonitor<CorrelationIdOptions>> _options = new();
-    readonly Mock<ICorrelationService> _correlation = new();
+    readonly Mock<ICorrelationManager> _correlation = new();
 
     [Fact, Trait("Category", "Unit")]
     public void Constructor_CanCreateInstance()
@@ -42,7 +42,7 @@ public class CorrelationIdMiddlewareShould
     {
         var act = () => new CorrelationIdMiddleware(_delegate, _options.Object, null!);
 
-        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
+        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'manager')");
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -55,7 +55,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id"));
+        _correlation.Verify(correlation => correlation.Set("header-id"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -69,7 +69,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "cookie-id"));
+        _correlation.Verify(correlation => correlation.Set("cookie-id"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -83,7 +83,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "cookie-id"));
+        _correlation.Verify(correlation => correlation.Set("cookie-id"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -98,7 +98,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id"));
+        _correlation.Verify(correlation => correlation.Set("header-id"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -111,7 +111,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id"));
+        _correlation.Verify(correlation => correlation.Set("header-id"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -125,7 +125,7 @@ public class CorrelationIdMiddlewareShould
 
         await middleware.Invoke(httpContext);
 
-        _correlation.Verify(correlation => correlation.Set(It.IsAny<HttpContext>(), "header-id-1"));
+        _correlation.Verify(correlation => correlation.Set("header-id-1"));
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -138,7 +138,6 @@ public class CorrelationIdMiddlewareShould
         await middleware.Invoke(httpContext);
 
         _correlation.Verify(correlation => correlation.Set(
-                It.IsAny<HttpContext>(),
                 It.Is<string>(value => !string.IsNullOrWhiteSpace(value))),
             Times.Once);
     }
@@ -159,7 +158,7 @@ public class CorrelationIdMiddlewareShould
 
     private void MockCorrelationGet(string result) =>
         _correlation
-            .Setup(correlation => correlation.Get(It.IsAny<HttpContext>()))
+            .Setup(correlation => correlation.Get())
             .Returns(result);
 
     private CorrelationIdMiddleware Middleware() => new(_delegate, _options.Object, _correlation.Object);
