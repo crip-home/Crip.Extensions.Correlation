@@ -2,19 +2,20 @@
 using Crip.Extensions.Correlation.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Crip.Extensions.Correlation.Tests.Middlewares;
 
 public class CorrelationIdLoggingMiddlewareShould
 {
     readonly Mock<ILogger<CorrelationIdLoggingMiddleware>> _logger = new();
-    readonly Mock<ICorrelationService> _correlation = new();
+    readonly Mock<ICorrelationManager> _correlation = new();
     readonly RequestDelegate _delegate = _ => Task.CompletedTask;
 
     [Fact, Trait("Category", "Unit")]
     public void Constructor_CanCreateInstance()
     {
-        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, _delegate);
+        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, _correlation.Object, _delegate);
 
         act.Should().NotThrow();
     }
@@ -22,7 +23,7 @@ public class CorrelationIdLoggingMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfLoggerNotProvided()
     {
-        var act = () => new CorrelationIdLoggingMiddleware(null!, _delegate);
+        var act = () => new CorrelationIdLoggingMiddleware(null!, _correlation.Object, _delegate);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'logger')");
     }
@@ -30,15 +31,15 @@ public class CorrelationIdLoggingMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfCorrelationNotProvided()
     {
-        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, _delegate);
+        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, null!, _delegate);
 
-        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
+        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'manager')");
     }
 
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfDelegateNotProvided()
     {
-        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, null!);
+        var act = () => new CorrelationIdLoggingMiddleware(_logger.Object, _correlation.Object, null!);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'next')");
     }
@@ -54,7 +55,7 @@ public class CorrelationIdLoggingMiddlewareShould
             return Task.CompletedTask;
         }
 
-        CorrelationIdLoggingMiddleware middleware = new(logger, RequestDelegate);
+        CorrelationIdLoggingMiddleware middleware = new(logger, _correlation.Object, RequestDelegate);
         MockCorrelationScope("Key", "Value");
 
         using var _ = TestCorrelator.CreateContext();
@@ -73,7 +74,7 @@ public class CorrelationIdLoggingMiddlewareShould
     [Fact, Trait("Category", "Unit")]
     public async Task Invoke_FailsIfContextNotProvided()
     {
-        CorrelationIdLoggingMiddleware middleware = new(_logger.Object, _delegate);
+        CorrelationIdLoggingMiddleware middleware = new(_logger.Object, _correlation.Object, _delegate);
 
         Func<Task> act = async () => await middleware.Invoke(null!);
 
@@ -84,7 +85,7 @@ public class CorrelationIdLoggingMiddlewareShould
 
     private void MockCorrelationScope(string key, string value) =>
         _correlation
-            .Setup(correlation => correlation.Scope(It.IsAny<HttpContext>()))
+            .Setup(correlation => correlation.Scope())
             .Returns(new Dictionary<string, object?> { { key, value } });
 
     private static ILoggerFactory CreateLoggerFactory() =>

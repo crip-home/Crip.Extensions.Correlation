@@ -6,12 +6,12 @@ namespace Crip.Extensions.Correlation.Tests.Handlers;
 public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
 {
     private readonly Mock<IOptions<CorrelationIdOptions>> _options = new();
-    private readonly Mock<IHttpCorrelationAccessor> _correlation = new();
+    private readonly Mock<ICorrelationManager> _correlation = new();
 
     [Fact, Trait("Category", "Unit")]
     public void Constructor_DoesNotFail()
     {
-        var act = () => new CorrelationIdHeaderHandler(_options.Object);
+        var act = () => new CorrelationIdHeaderHandler(_options.Object, _correlation.Object);
 
         act.Should().NotThrow();
     }
@@ -19,7 +19,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfOptionsNotProvided()
     {
-        var act = () => new CorrelationIdHeaderHandler(null!);
+        var act = () => new CorrelationIdHeaderHandler(null!, _correlation.Object);
 
         act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'options')");
     }
@@ -27,9 +27,9 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
     [Fact, Trait("Category", "Unit")]
     public void Constructor_FailsIfCorrelationNotProvided()
     {
-        var act = () => new CorrelationIdHeaderHandler(_options.Object);
+        var act = () => new CorrelationIdHeaderHandler(_options.Object, null!);
 
-        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'correlation')");
+        act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'manager')");
     }
 
     [Fact, Trait("Category", "Unit")]
@@ -88,7 +88,7 @@ public class CorrelationIdHeaderHandlerShould : DelegatingHandlerTestBase
         request.Headers.Any(header => header.Value.FirstOrDefault() == "header-id").Should().BeFalse();
     }
 
-    private CorrelationIdHeaderHandler Handler() => new(_options.Object) { InnerHandler = InnerHandler };
+    private CorrelationIdHeaderHandler Handler() => new(_options.Object, _correlation.Object) { InnerHandler = InnerHandler };
 
     private void MockOptions(CorrelationIdOptions correlationIdOptions) =>
         _options.Setup(options => options.Value).Returns(correlationIdOptions);
